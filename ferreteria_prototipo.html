@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ferretería Nava — Prototipo</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#111827; --card:#1f2937; --muted:#94a3b8; --text:#e5e7eb;
+    --accent:#8b5cf6; --accent-2:#22d3ee; --ok:#10b981; --warn:#f59e0b; --danger:#ef4444;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 700px at 20% -10%, #192142, #0b0f1c 60%, #070b14), var(--bg); color:var(--text); font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(255,255,255,.03);backdrop-filter: blur(6px); position:sticky;top:0;z-index:9;border-bottom:1px solid rgba(255,255,255,.06)}
+  header .brand{display:flex;gap:12px;align-items:center}
+  header .brand .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow: var(--shadow)}
+  header nav{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;background:#2a3448;color:var(--text);cursor:pointer;transition: transform .06s ease, background .2s}
+  .btn:hover{transform: translateY(-1px); background:#37445c}
+  .btn.acc{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#051220;font-weight:700}
+  .btn.ok{background:linear-gradient(135deg,#34d399,#10b981)}
+  .btn.warn{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+  .btn.danger{background:linear-gradient(135deg,#f87171,#ef4444)}
+  .wrap{padding:24px;max-width:1200px;margin:auto}
+  .grid{display:grid;gap:16px}
+  .cards{grid-template-columns: repeat(3,minmax(0,1fr))}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.06); padding:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
+  .kpi{font-size:28px;font-weight:800}
+  .kpi small{font-size:11px;color:var(--muted);font-weight:600}
+  .muted{color:var(--muted)}
+  .panel{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); padding:18px; box-shadow: var(--shadow)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  input[type="text"],input[type="number"],input[type="date"],select,textarea{
+    background:#0b1224;color:var(--text); border:1px solid #223055; border-radius:10px; padding:10px 12px; outline:none; min-height:38px
+  }
+  table{width:100%;border-collapse: collapse;border:1px solid rgba(255,255,255,.08);overflow:hidden;border-radius:14px}
+  th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+  th{background:rgba(255,255,255,.04); font-weight:700}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .tag{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;display:inline-block}
+  .tag.ok{background:rgba(16,185,129,.15); color:#34d399}
+  .tag.warn{background:rgba(245,158,11,.15); color:#fbbf24}
+  .tag.danger{background:rgba(239,68,68,.15); color:#f87171}
+  .hidden{display:none !important}
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .tabs .btn.active{outline:2px solid rgba(255,255,255,.2)}
+  .flex{display:flex;gap:10px;align-items:center}
+  .right{margin-left:auto}
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal{background:#0b1224;border:1px solid rgba(255,255,255,.1);border-radius:16px;min-width:320px;max-width:640px;padding:16px;box-shadow:var(--shadow)}
+  .modal header{position:relative;border:none;backdrop-filter:none;background:transparent;padding:0;margin-bottom:8px}
+  .modal footer{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+  .split{display:grid;grid-template-columns:1.5fr .9fr; gap:16px}
+  @media (max-width: 900px){ .cards{grid-template-columns:1fr} .split{grid-template-columns:1fr} header nav{max-width:100%} }
+  .note{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <div style="font-weight:800">Ferretería Nava</div>
+      <div class="muted" style="font-size:12px">Prototipo — MVP</div>
+    </div>
+  </div>
+  <nav id="topNav" class="hidden">
+    <button class="btn" data-tab="tab-dashboard">Dashboard</button>
+    <button class="btn" data-tab="tab-inventario">Inventario</button>
+    <button class="btn" data-tab="tab-ventas">Ventas</button>
+    <button class="btn" data-tab="tab-reportes">Reportes</button>
+    <button class="btn" data-tab="tab-log">Bitácora</button>
+    <span class="muted" id="welcome" style="margin-left:6px"></span>
+    <button class="btn danger" id="logoutBtn" title="Cerrar sesión">Salir</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <section id="tab-login" class="panel">
+    <h2>Acceso</h2>
+    <p class="muted">Usa cualquier usuario y contraseña (login simulado para prototipo).</p>
+    <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px; max-width:520px">
+      <div class="panel">
+        <label>Usuario</label>
+        <input id="loginUser" type="text" placeholder="usuario@ferre.com" />
+        <label style="margin-top:8px; display:block">Contraseña</label>
+        <input id="loginPass" type="password" placeholder="••••••••" />
+        <div style="margin-top:12px; display:flex; gap:8px">
+          <button id="loginBtn" class="btn acc">Entrar</button>
+          <span class="note">Este login solo establece sesión local para mostrar el flujo.</span>
+        </div>
+      </div>
+      <div class="panel">
+        <b>¿Qué incluye este MVP?</b>
+        <ul>
+          <li>Inventario con alta/edición, filtros y mínimo por producto.</li>
+          <li>Ventas con carrito, confirmación y descuento de stock.</li>
+          <li>Reporte de <i>Stock bajo</i> y exportación CSV.</li>
+          <li>Bitácora (LOG) de acciones.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-dashboard" class="hidden">
+    <div class="grid cards">
+      <div class="card">
+        <div class="muted">Productos activos</div>
+        <div class="kpi" id="kpiProductos">0 <small>items</small></div>
+      </div>
+      <div class="card">
+        <div class="muted">Alerta: Stock bajo</div>
+        <div class="kpi" id="kpiBajo">0 <small>productos</small></div>
+      </div>
+      <div class="card">
+        <div class="muted">Ventas hoy</div>
+        <div class="kpi" id="kpiVentasHoy">0 <small>tickets</small></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <b>Resumen</b>
+      <p class="muted">Simula datos reales para evidencias de la implementación. Los cambios se guardan en localStorage.</p>
+    </div>
+  </section>
+
+  <section id="tab-inventario" class="hidden">
+    <div class="toolbar">
+      <input type="text" id="invSearch" placeholder="Buscar por código o nombre..." />
+      <select id="invCat">
+        <option value="">Todas las categorías</option>
+      </select>
+      <button class="btn ok" id="btnAddProd">Agregar producto</button>
+    </div>
+    <div class="panel">
+      <table id="tblInv">
+        <thead>
+          <tr>
+            <th>Código</th><th>Nombre</th><th>Categoría</th>
+            <th>Precio</th><th>Existencia</th><th>Mínimo</th><th>Estado</th><th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="note" style="margin-top:8px">Tip: filtra por categoría o escribe parte del código/nombre.</div>
+    </div>
+  </section>
+
+  <section id="tab-ventas" class="hidden">
+    <div class="split">
+      <div class="panel">
+        <div class="toolbar">
+          <input id="saleSearch" type="text" placeholder="Buscar producto..." />
+          <select id="saleCat"><option value="">Todas</option></select>
+        </div>
+        <table id="tblSaleProducts">
+          <thead><tr><th>Código</th><th>Nombre</th><th>Existencia</th><th>Precio</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="flex">
+          <b>Carrito</b>
+          <span class="right"></span>
+          <button class="btn warn" id="btnClearCart">Vaciar</button>
+        </div>
+        <table id="tblCart">
+          <thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="flex" style="margin-top:10px">
+          <div class="muted">Total:</div>
+          <div class="right" id="cartTotal" style="font-weight:800">0.00</div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end">
+          <button class="btn acc" id="btnConfirmSale">Confirmar venta</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-reportes" class="hidden">
+    <div class="panel">
+      <div class="flex">
+        <b>Stock bajo</b>
+        <button class="btn right" id="btnExport">Exportar CSV</button>
+      </div>
+      <table id="tblLow">
+        <thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Existencia</th><th>Mínimo</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tab-log" class="hidden">
+    <div class="panel">
+      <table id="tblLog">
+        <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true">
+    <header><h3 id="modalTitle">Producto</h3></header>
+    <div class="grid" style="grid-template-columns:1fr 1fr; gap:8px">
+      <div><label>Código</label><input id="fCodigo" type="text" /></div>
+      <div><label>Nombre</label><input id="fNombre" type="text" /></div>
+      <div><label>Categoría</label><input id="fCategoria" type="text" placeholder="Ferretería / Pinturas / Herramientas" /></div>
+      <div><label>Precio</label><input id="fPrecio" type="number" step="0.01" /></div>
+      <div><label>Existencia</label><input id="fExistencia" type="number" /></div>
+      <div><label>Mínimo</label><input id="fMinimo" type="number" /></div>
+    </div>
+    <footer>
+      <button class="btn" id="btnCancel">Cancelar</button>
+      <button class="btn ok" id="btnSave">Guardar</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+const LS_KEY = 'ferre_data_v1';
+const state = {
+  user: null,
+  productos: [],
+  ventas: [],
+  log: [],
+  cart: []
+};
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const fmt = n => (Number(n||0)).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+function seedIfEmpty(){
+  const saved = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+  if(!saved.productos){
+    state.productos = [
+      {id:genId(), codigo:'MART-001', nombre:'Martillo 16oz', categoria:'Herramientas', precio:159.90, existencia:25, minimo:5},
+      {id:genId(), codigo:'CLAV-100', nombre:'Clavo 2" (bolsa 100)', categoria:'Ferretería', precio:49.00, existencia:8, minimo:12},
+      {id:genId(), codigo:'DEST-SET', nombre:'Juego destornilladores 6pzas', categoria:'Herramientas', precio:229.00, existencia:12, minimo:3},
+      {id:genId(), codigo:'PINT-REX', nombre:'Pintura acrílica 1L blanca', categoria:'Pinturas', precio:189.50, existencia:3, minimo:5},
+      {id:genId(), codigo:'BROC-3P', nombre:'Brocha 3"', categoria:'Pinturas', precio:39.90, existencia:30, minimo:10},
+      {id:genId(), codigo:'TAQU-10', nombre:'Taquetes expansión #10 (10u)', categoria:'Ferretería', precio:35.50, existencia:6, minimo:6},
+    ];
+    state.ventas = [];
+    state.log = [];
+    persist();
+  }else{
+    Object.assign(state, saved);
+  }
+}
+
+function persist(){
+  localStorage.setItem(LS_KEY, JSON.stringify({
+    user: state.user, productos: state.productos, ventas: state.ventas, log: state.log
+  }));
+}
+
+function genId(){ return Math.random().toString(36).slice(2,10) }
+function nowStr(){ return new Date().toLocaleString('es-MX') }
+function logAction(accion, detalle){
+  state.log.unshift({ts: nowStr(), user: state.user?.email || 'sistema', accion, detalle});
+  drawLog();
+  persist();
+}
+
+$('#loginBtn').addEventListener('click', () => {
+  const email = $('#loginUser').value.trim();
+  const pass = $('#loginPass').value.trim();
+  if(!email || !pass){ alert('Ingresa usuario y contraseña'); return; }
+  state.user = { email };
+  $('#tab-login').classList.add('hidden');
+  $('#topNav').classList.remove('hidden');
+  $('#welcome').textContent = `| Sesión: ${email}`;
+  showTab('tab-dashboard');
+  logAction('login', `Acceso de ${email}`);
+});
+$('#logoutBtn').addEventListener('click', () => {
+  logAction('logout', `Salida de ${state.user?.email||''}`);
+  state.user = null; persist();
+  location.reload();
+});
+
+$$('header nav .btn[data-tab]').forEach(b => b.addEventListener('click', () => {
+  showTab(b.getAttribute('data-tab'));
+}));
+function showTab(id){
+  $$('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
+  $(`#${id}`).classList.remove('hidden');
+  $$('header nav .btn').forEach(b => b.classList.remove('active'));
+  $$(`header nav .btn[data-tab="${id}"]`).forEach(b => b.classList.add('active'));
+  if(id==='tab-dashboard') updateKpis();
+  if(id==='tab-inventario') { drawInv(); fillCats(); }
+  if(id==='tab-ventas') { drawSaleProducts(); fillCatsSale(); drawCart(); }
+  if(id==='tab-reportes') drawLow();
+  if(id==='tab-log') drawLog();
+}
+
+function updateKpis(){
+  $('#kpiProductos').innerHTML = `${state.productos.length} <small>items</small>`;
+  const low = state.productos.filter(p => Number(p.existencia) <= Number(p.minimo)).length;
+  $('#kpiBajo').innerHTML = `${low} <small>productos</small>`;
+  const hoy = new Date().toDateString();
+  const ventasHoy = state.ventas.filter(v => new Date(v.ts).toDateString()===hoy).length;
+  $('#kpiVentasHoy').innerHTML = `${ventasHoy} <small>tickets</small>`;
+}
+
+function fillCats(){
+  const cats = [...new Set(state.productos.map(p=>p.categoria))].sort();
+  const sel = $('#invCat');
+  sel.innerHTML = `<option value="">Todas las categorías</option>` + cats.map(c=>`<option>${c}</option>`).join('');
+}
+function drawInv(){
+  const q = $('#invSearch').value.toLowerCase();
+  const cat = $('#invCat').value;
+  const body = $('#tblInv tbody'); body.innerHTML = '';
+  state.productos
+    .filter(p => (!cat || p.categoria===cat))
+    .filter(p => !q || p.codigo.toLowerCase().includes(q) || p.nombre.toLowerCase().includes(q))
+    .forEach(p => {
+      const tr = document.createElement('tr');
+      const estado = Number(p.existencia)<=Number(p.minimo) ? 'warn' : 'ok';
+      tr.innerHTML = `
+        <td>${p.codigo}</td>
+        <td>${p.nombre}</td>
+        <td>${p.categoria}</td>
+        <td>$ ${fmt(p.precio)}</td>
+        <td>${p.existencia}</td>
+        <td>${p.minimo}</td>
+        <td><span class="tag ${estado}">${estado==='ok'?'Correcto':'Stock bajo'}</span></td>
+        <td class="flex" style="gap:6px">
+          <button class="btn" onclick="openModal('${p.id}')">Editar</button>
+          <button class="btn danger" onclick="delProd('${p.id}')">Eliminar</button>
+        </td>`;
+      body.appendChild(tr);
+    });
+}
+$('#invSearch').addEventListener('input', drawInv);
+$('#invCat').addEventListener('change', drawInv);
+$('#btnAddProd').addEventListener('click', ()=> openModal(null));
+
+function delProd(id){
+  if(!confirm('¿Eliminar producto?')) return;
+  const p = state.productos.find(x=>x.id===id);
+  state.productos = state.productos.filter(x=>x.id!==id);
+  persist(); drawInv(); updateKpis();
+  logAction('delete_producto', `Eliminado ${p.codigo} - ${p.nombre}`);
+}
+
+const modal = $('#modalBack');
+const fields = ['fCodigo','fNombre','fCategoria','fPrecio','fExistencia','fMinimo'];
+let editingId = null;
+function openModal(id){
+  editingId = id;
+  if(id){
+    const p = state.productos.find(x=>x.id===id);
+    $('#modalTitle').textContent = 'Editar producto';
+    $('#fCodigo').value = p.codigo;
+    $('#fNombre').value = p.nombre;
+    $('#fCategoria').value = p.categoria;
+    $('#fPrecio').value = p.precio;
+    $('#fExistencia').value = p.existencia;
+    $('#fMinimo').value = p.minimo;
+  }else{
+    $('#modalTitle').textContent = 'Nuevo producto';
+    fields.forEach(f=> $('#'+f).value = '');
+  }
+  modal.style.display='flex';
+}
+$('#btnCancel').addEventListener('click', ()=> modal.style.display='none');
+modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
+$('#btnSave').addEventListener('click', saveProd);
+
+function saveProd(){
+  const data = {
+    codigo: $('#fCodigo').value.trim(),
+    nombre: $('#fNombre').value.trim(),
+    categoria: $('#fCategoria').value.trim() || 'General',
+    precio: Number($('#fPrecio').value),
+    existencia: Number($('#fExistencia').value),
+    minimo: Number($('#fMinimo').value)
+  };
+  if(!data.codigo || !data.nombre || !data.precio){ alert('Código, nombre y precio son obligatorios'); return; }
+  if(!editingId && state.productos.some(p=>p.codigo.toLowerCase()===data.codigo.toLowerCase())){
+    alert('Código duplicado.'); return;
+  }
+  if(editingId){
+    const idx = state.productos.findIndex(p=>p.id===editingId);
+    state.productos[idx] = {...state.productos[idx], ...data};
+    logAction('update_producto', `Editado ${data.codigo} - ${data.nombre}`);
+  }else{
+    state.productos.unshift({id:genId(), ...data});
+    logAction('create_producto', `Creado ${data.codigo} - ${data.nombre}`);
+  }
+  persist(); modal.style.display='none'; drawInv(); updateKpis();
+}
+
+function fillCatsSale(){
+  const cats = [...new Set(state.productos.map(p=>p.categoria))].sort();
+  const sel = $('#saleCat');
+  sel.innerHTML = `<option value="">Todas</option>` + cats.map(c=>`<option>${c}</option>`).join('');
+}
+function drawSaleProducts(){
+  const q = $('#saleSearch').value.toLowerCase();
+  const cat = $('#saleCat').value;
+  const body = $('#tblSaleProducts tbody'); body.innerHTML = '';
+  state.productos
+    .filter(p => (!cat || p.categoria===cat))
+    .filter(p => !q || p.codigo.toLowerCase().includes(q) || p.nombre.toLowerCase().includes(q))
+    .forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.codigo}</td>
+        <td>${p.nombre}</td>
+        <td>${p.existencia}</td>
+        <td>$ ${fmt(p.precio)}</td>
+        <td><button class="btn" onclick="addToCart('${p.id}')">Agregar</button></td>`;
+      body.appendChild(tr);
+    });
+}
+$('#saleSearch').addEventListener('input', drawSaleProducts);
+$('#saleCat').addEventListener('change', drawSaleProducts);
+
+function addToCart(id){
+  const p = state.productos.find(x=>x.id===id);
+  const item = state.cart.find(x=>x.id===id);
+  if(item){ item.cant = Math.min(item.cant+1, p.existencia); }
+  else state.cart.push({id, cant:1});
+  drawCart();
+}
+function drawCart(){
+  const body = $('#tblCart tbody'); body.innerHTML = '';
+  let total = 0;
+  state.cart.forEach(ci => {
+    const p = state.productos.find(x=>x.id===ci.id);
+    const sub = p.precio * ci.cant; total += sub;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.nombre}</td>
+      <td>
+        <input type="number" min="1" max="${p.existencia}" value="${ci.cant}" style="width:70px"
+          onchange="updateCartQty('${ci.id}', this.value)" />
+      </td>
+      <td>$ ${fmt(p.precio)}</td>
+      <td>$ ${fmt(sub)}</td>
+      <td><button class="btn danger" onclick="removeFromCart('${ci.id}')">Quitar</button></td>`;
+    body.appendChild(tr);
+  });
+  $('#cartTotal').textContent = '$ ' + fmt(total);
+}
+function updateCartQty(id, val){
+  val = Number(val||1);
+  const p = state.productos.find(x=>x.id===id);
+  const it = state.cart.find(x=>x.id===id);
+  it.cant = Math.max(1, Math.min(val, p.existencia));
+  drawCart();
+}
+function removeFromCart(id){
+  state.cart = state.cart.filter(x=>x.id!==id);
+  drawCart();
+}
+$('#btnClearCart').addEventListener('click', ()=>{ state.cart=[]; drawCart(); });
+
+$('#btnConfirmSale').addEventListener('click', ()=>{
+  if(state.cart.length===0) { alert('Carrito vacío'); return; }
+  for(const it of state.cart){
+    const p = state.productos.find(x=>x.id===it.id);
+    if(it.cant > p.existencia){
+      alert(`Stock insuficiente para ${p.nombre}`); return;
+    }
+  }
+  let total = 0;
+  const detalle = state.cart.map(it=>{
+    const p = state.productos.find(x=>x.id===it.id);
+    p.existencia -= it.cant;
+    const sub = p.precio * it.cant; total += sub;
+    return {productoId:p.id, codigo:p.codigo, nombre:p.nombre, cantidad:it.cant, precio:p.precio, subtotal:sub};
+  });
+  const ticket = { id: genId(), ts: new Date().toISOString(), user: state.user?.email||'caja', items: detalle, total };
+  state.ventas.unshift(ticket);
+  state.cart = [];
+  persist(); drawCart(); drawSaleProducts(); updateKpis(); drawInv();
+  logAction('venta', `Ticket ${ticket.id} por $${fmt(total)} (${detalle.length} items)`);
+  alert(`Venta registrada. Total: $ ${fmt(total)}`);
+});
+
+function drawLow(){
+  const body = $('#tblLow tbody'); body.innerHTML='';
+  state.productos
+    .filter(p => Number(p.existencia) <= Number(p.minimo))
+    .forEach(p=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${p.codigo}</td><td>${p.nombre}</td><td>${p.categoria}</td><td>${p.existencia}</td><td>${p.minimo}</td>`;
+      body.appendChild(tr);
+    });
+}
+$('#btnExport').addEventListener('click', ()=>{
+  const rows = [['Código','Nombre','Categoría','Existencia','Mínimo']];
+  state.productos
+    .filter(p => Number(p.existencia) <= Number(p.minimo))
+    .forEach(p=> rows.push([p.codigo,p.nombre,p.categoria,p.existencia,p.minimo]));
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'stock_bajo.csv';
+  a.click();
+});
+
+function drawLog(){
+  const body = $('#tblLog tbody'); body.innerHTML='';
+  state.log.forEach(e=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${e.ts}</td><td>${e.user}</td><td>${e.accion}</td><td>${e.detalle}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+seedIfEmpty();
+showTab('tab-login'); 
+
+</script>
+</body>
+</html>

@@ -69,14 +69,14 @@ Apoyar el control operativo de una ferretería mediante un sistema web que permi
 
 ## Estructura del repositorio
 
-- `ferreteria_prototipo.html` → archivo principal del prototipo.
+- `index.html` → archivo principal del prototipo.
 - `README.md` → documentación general del proyecto.
 - `Actividad_2_3_Segundo_Sprint.pdf` → evidencia académica previa del avance del proyecto.
 
 ## Cómo ejecutar el prototipo
 
 1. Descargar o clonar este repositorio.
-2. Abrir el archivo `ferreteria_prototipo.html` en el navegador.
+2. Abrir el archivo `index.html` en el navegador.
 3. Iniciar sesión con cualquier usuario y contraseña.
 4. Navegar entre los módulos del sistema desde el menú superior.
 

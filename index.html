@@ -501,7 +501,16 @@ function drawLow(){
 }
   
 $('#btnExport').addEventListener('click', () => {
-  const rows = [['Código', 'Nombre', 'Categoría', 'Existencia', 'Mínimo']];
+  const limpiarTexto = (valor) => String(valor).replace(/"/g, ' pulg');
+
+  const escapeCSV = (valor) => {
+    const s = limpiarTexto(valor);
+    return /[;\r\n"]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const rows = [
+    ['Código', 'Nombre', 'Categoría', 'Existencia', 'Mínimo']
+  ];
 
   state.productos
     .filter(p => Number(p.existencia) <= Number(p.minimo))
@@ -514,7 +523,7 @@ $('#btnExport').addEventListener('click', () => {
     ]));
 
   const csv = rows
-    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'))
+    .map(r => r.map(escapeCSV).join(';'))
     .join('\r\n');
 
   const BOM = '\uFEFF';

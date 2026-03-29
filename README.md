@@ -1,126 +1,99 @@
-# Sistema Web de Gestión para Ferretería Nava
+# Sistema Web de Gestión e Inventario para Ferretería Nava
 
-Prototipo funcional desarrollado como parte del proyecto académico de implementación incremental bajo metodología **Scrum**.
+## Descripción del proyecto
+Este proyecto consiste en el desarrollo de un prototipo web para la gestión básica de una ferretería, enfocado en el control de inventario, registro de ventas, visualización de indicadores y generación de reportes. El sistema fue desarrollado como parte de una práctica académica basada en la metodología Scrum, documentando avances por sprint.
 
-## Descripción general
-
-Este proyecto consiste en el desarrollo de un sistema web para apoyar la gestión básica de una ferretería. El prototipo actual permite simular procesos importantes del negocio, como el acceso al sistema, el control de inventario, el registro de ventas, la visualización de indicadores generales, la consulta de reportes y el seguimiento de movimientos mediante una bitácora.
-
-En esta versión, el proyecto ya no se limita solo al inventario base, sino que integra varios módulos en una misma interfaz. Por ello, el repositorio corresponde actualmente a un **avance de Sprint 4**, enfocado en **visibilidad y control**, especialmente mediante el **dashboard** y la **bitácora de acciones**.
+En su estado actual, el prototipo permite trabajar con módulos de inventario, ventas, dashboard, bitácora y reportes, integrados en una sola interfaz. Se trata de un MVP funcional orientado a demostrar el flujo general del sistema y sus principales operaciones.
 
 ## Estado actual del proyecto
+**Sprint actual documentado: Sprint 5**
 
-**Versión académica actual:** Sprint 4  
-**Estatus:** Prototipo funcional / MVP  
-**Tipo de almacenamiento:** localStorage del navegador  
-**Autenticación:** simulada para fines demostrativos
+Durante el quinto sprint se consolidó principalmente el módulo de reportes, en especial:
+- reporte de productos con stock bajo,
+- exportación de reporte a formato CSV,
+- validación de compatibilidad del archivo exportado,
+- ajustes de cierre y refinamiento del prototipo.
 
-## Objetivo del sistema
+También se revisó la integración entre los módulos ya desarrollados para asegurar una navegación más clara y un funcionamiento congruente del sistema.
 
-Apoyar el control operativo de una ferretería mediante un sistema web que permita:
+## Módulos implementados
+- **Dashboard**
+  - visualización de productos activos,
+  - alerta de stock bajo,
+  - ventas del día.
 
-- consultar productos disponibles,
-- registrar y actualizar inventario,
-- realizar ventas con descuento automático de existencias,
-- visualizar indicadores generales del negocio,
-- detectar productos con stock bajo,
-- y llevar una bitácora de acciones relevantes dentro del sistema.
+- **Inventario**
+  - alta de productos,
+  - edición de productos,
+  - eliminación de productos,
+  - búsqueda por código o nombre,
+  - filtro por categoría,
+  - control de existencia mínima.
 
-## Módulos incluidos
+- **Ventas**
+  - selección de productos,
+  - carrito de compra,
+  - confirmación de venta,
+  - descuento automático de stock.
 
-### 1. Acceso al sistema
-- Pantalla de inicio de sesión simulada.
-- Permite establecer una sesión local para mostrar el flujo de uso del prototipo.
+- **Reportes**
+  - consulta de productos con stock bajo,
+  - exportación del reporte a CSV,
+  - ajustes de compatibilidad para apertura en Excel.
 
-### 2. Dashboard
-- Visualización rápida de indicadores clave.
-- Muestra productos activos.
-- Muestra productos con stock bajo.
-- Muestra ventas realizadas en el día.
-
-### 3. Inventario
-- Alta de productos.
-- Edición de productos existentes.
-- Eliminación de productos.
-- Búsqueda por código o nombre.
-- Filtro por categoría.
-- Validación básica del nivel mínimo de existencia.
-
-### 4. Ventas
-- Consulta de productos disponibles para vender.
-- Carrito de compra.
-- Confirmación de venta.
-- Descuento automático del stock al completar la venta.
-
-### 5. Reportes
-- Visualización de productos con stock bajo.
-- Exportación de la información a archivo CSV.
-
-### 6. Bitácora
-- Registro de acciones relevantes dentro del sistema.
-- Guarda eventos como acceso, cierre de sesión, altas, ediciones, eliminaciones y ventas.
+- **Bitácora**
+  - registro de acciones relevantes del sistema,
+  - seguimiento de movimientos como inicio de sesión, creación, edición, eliminación y ventas.
 
 ## Tecnologías utilizadas
+- HTML5
+- CSS3
+- JavaScript
+- LocalStorage para persistencia local
+- Render para despliegue del prototipo
 
-- **HTML5**
-- **CSS3**
-- **JavaScript**
-- **localStorage** para persistencia local de datos
+## Enlaces del proyecto
+- **Repositorio en GitHub:**  
+  https://github.com/Jecxa/Sistema-Ferreteria-Nava
 
-## Estructura del repositorio
+- **Prototipo desplegado en Render:**  
+  https://sistema-ferreteria-nava.onrender.com
 
-- `index.html` → archivo principal del prototipo.
-- `README.md` → documentación general del proyecto.
-- `Actividad_2_3_Segundo_Sprint.pdf` → evidencia académica previa del avance del proyecto.
-
-## Cómo ejecutar el prototipo
-
-1. Descargar o clonar este repositorio.
-2. Abrir el archivo `index.html` en el navegador.
-3. Iniciar sesión con cualquier usuario y contraseña.
-4. Navegar entre los módulos del sistema desde el menú superior.
+## Objetivo del sistema
+Desarrollar una solución web que permita a una ferretería llevar un mejor control de sus productos, visualizar información relevante del negocio, registrar ventas y consultar reportes básicos para apoyar la toma de decisiones.
 
 ## Alcance del prototipo
+Este sistema corresponde a una versión prototipo tipo MVP. Su función principal es demostrar la integración de módulos esenciales del negocio y evidenciar el avance del proyecto durante los sprints. Algunas funciones se manejan con persistencia local y login simulado, ya que el enfoque de esta etapa está en la validación funcional y visual del sistema.
 
-Este sistema corresponde a un **MVP funcional**. Su propósito es demostrar el flujo general del proyecto y los avances logrados durante los sprints académicos. Algunas funciones se encuentran simuladas o trabajan de forma local, por lo que no representa todavía una versión final conectada a una base de datos real o a un backend productivo.
-
-## Avance por sprints
+## Avances por sprint
 
 ### Sprint 1
-- Inicio del proyecto.
-- Definición de la base visual del sistema.
-- Acceso simulado.
-- Inventario inicial.
+- definición inicial del proyecto,
+- estructura base del prototipo,
+- primeras vistas del sistema.
 
 ### Sprint 2
-- Mejoras en estructura del inventario.
-- Ajustes en interfaz y navegación.
-- Avance funcional del CRUD de productos.
+- avance del módulo de inventario,
+- captura y gestión inicial de productos.
 
 ### Sprint 3
-- Integración general de módulos.
-- Avance en ventas y reportes.
-- Consolidación del prototipo como sistema navegable.
+- integración de operaciones principales,
+- mejoras en navegación y organización del prototipo.
 
 ### Sprint 4
-- Implementación del dashboard con KPIs.
-- Integración de la bitácora de movimientos.
-- Mejor relación entre inventario, ventas, reportes y control visual.
+- desarrollo del dashboard,
+- incorporación de bitácora de movimientos,
+- fortalecimiento de la parte de visibilidad y control.
 
-## Propuesta para el siguiente sprint
+### Sprint 5
+- consolidación del módulo de reportes,
+- implementación del reporte de stock bajo,
+- exportación a CSV,
+- corrección de detalles de compatibilidad del archivo exportado,
+- validación y cierre funcional del prototipo.
 
-Para el siguiente sprint se contempla:
-
-- mejorar la presentación de reportes,
-- refinar la interfaz,
-- fortalecer validaciones,
-- mejorar la claridad de la bitácora,
-- y dejar una versión más estable y mejor documentada para la entrega final.
+## Observaciones
+El proyecto continúa siendo un prototipo académico funcional. No representa todavía una versión final de producción, pero sí muestra de forma clara el flujo general de operación de un sistema web para una ferretería.
 
 ## Autoría
-
-Proyecto académico desarrollado para la materia correspondiente al curso, tomando como caso de estudio la empresa **Ferretería Nava**.
-
-## Notas finales
-
-Este repositorio documenta el avance progresivo del sistema bajo metodología Scrum. El objetivo principal ha sido evidenciar el desarrollo por sprints, manteniendo una versión funcional y demostrable del proyecto.
+Proyecto desarrollado con fines académicos para documentar el avance por sprints en la implementación de un sistema web de gestión e inventario.

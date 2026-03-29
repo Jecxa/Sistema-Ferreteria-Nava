@@ -499,17 +499,30 @@ function drawLow(){
       body.appendChild(tr);
     });
 }
-$('#btnExport').addEventListener('click', ()=>{
-  const rows = [['Código','Nombre','Categoría','Existencia','Mínimo']];
+$('#btnExport').addEventListener('click', () => {
+  const rows = [['Código', 'Nombre', 'Categoría', 'Existencia', 'Mínimo']];
+
   state.productos
     .filter(p => Number(p.existencia) <= Number(p.minimo))
-    .forEach(p=> rows.push([p.codigo,p.nombre,p.categoria,p.existencia,p.minimo]));
-  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    .forEach(p => rows.push([p.codigo, p.nombre, p.categoria, p.existencia, p.minimo]));
+
+  const csv = rows
+    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+
+  const hoy = new Date();
+  const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'stock_bajo.csv';
+  a.download = `stock_bajo_${fecha}.csv`;
+
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 });
 
 function drawLog(){

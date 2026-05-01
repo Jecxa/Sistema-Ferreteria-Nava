@@ -28,7 +28,7 @@ No se plantea un Sprint 8, ya que la siguiente actividad corresponde a la revisi
   https://github.com/Jecxa/Sistema-Ferreteria-Nava
 
 - **Prototipo desplegado en Render:**  
-  https://sistema-ferreteria-nava.onrender.com
+  https://sistema-ferreteria-nava-u63n.onrender.com/
 
 ---
 
